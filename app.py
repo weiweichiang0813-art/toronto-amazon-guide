@@ -48,5 +48,6 @@ except Exception as e:
     st.error("Please make sure 'my_products.xlsx' is uploaded to your GitHub repository.")
     st.info("Check if you have added 'pandas' and 'openpyxl' to your requirements.txt")
 
-st.caption("As an Amazon Associate, I earn from qualifying purchases. #ad")
+st.caption("As an Amazon Associate, I earn from qualifying purchases.")
+
 
