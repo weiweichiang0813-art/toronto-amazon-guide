@@ -1,39 +1,30 @@
-import streamlit as st
-import pandas as pd
-
-# 1. 網頁配置
-st.set_page_config(page_title="CC Picks the World", page_icon="🔍", layout="wide")
-
-# 2. 側邊欄導航 (對應你的 Excel Sources 欄位)
-with st.sidebar:
-    st.title("📍 Navigation")
-    # 這裡的選項要跟 Excel 裡的 "Sources" 內容對應
-    main_page = st.radio(
-        "Select Collection",
-        ["Toronto", "Amazon", "CC"], 
-        index=0
-    )
-    search_keyword = st.text_input("🔍 Search Products", placeholder="e.g. Yoga")
-
-# 3. 讀取與過濾數據
+# --- 數據處理邏輯 (適配你的截圖) ---
 try:
     df = pd.read_excel("my_products.xlsx")
     
-    # 根據側邊欄選取的 Source 過濾
-    page_df = df[df['Sources'] == main_page]
+    # 對應你的側邊欄按鈕與 Excel 裡的 Sources 簡寫
+    # 如果按鈕選 "Toronto Base"，我們去 Excel 找 "Toronto"
+    source_map = {
+        "Toronto Base": "Toronto",
+        "Amazon Top Choice": "Amazon",
+        "CC Picks": "CC"
+    }
+    
+    selected_source_code = source_map[main_page]
+    
+    # 這裡使用 'Sources' 因為你的截圖標題是這個
+    page_df = df[df['Sources'] == selected_source_code]
 
-    st.title(f"Collection: {main_page}")
-
-    # 4. 動態建立 Tabs (根據你 Excel 實際有的 Category 自動生成)
-    # 這樣如果你以後加了 "Shoes"，它會自動跑出來
-    categories = page_df['Category'].unique().tolist()
-    if not categories:
-        st.warning("No categories found for this source.")
+    if page_df.empty:
+        st.warning(f"No products found for {main_page} in the Excel file.")
     else:
+        # 動態抓取該分類下的 Category (例如 Accessories, Clothing, Shoes)
+        categories = page_df['Category'].unique().tolist()
         tabs = st.tabs(categories)
 
         for i, cat in enumerate(categories):
             with tabs[i]:
+                # 過濾出該分類的產品
                 cat_df = page_df[page_df['Category'] == cat]
                 
                 # 搜尋過濾
@@ -42,15 +33,18 @@ try:
 
                 for _, row in cat_df.iterrows():
                     with st.container():
-                        col1, col2 = st.columns([1, 2])
+                        st.markdown('<div class="product-box">', unsafe_allow_html=True)
+                        col1, col2 = st.columns([1, 2], gap="large")
                         with col1:
-                            # 假設你的圖片放在 GitHub 的 images 資料夾
+                            # 確保你的圖片檔案放在與 .py 檔同一個資料夾
                             st.image(row['Image_URL'], use_container_width=True)
                         with col2:
                             st.subheader(row['Product_Name'])
                             st.write(row['Description'])
-                            st.link_button("View on Amazon", row['Affiliate_Link'])
-                        st.divider()
+                            st.link_button("View Details on Amazon", row['Affiliate_Link'])
+                        st.markdown('</div>', unsafe_allow_html=True)
 
+except KeyError as e:
+    st.error(f"欄位名稱錯誤：請檢查 Excel 標題是否為 'Sources'。錯誤資訊: {e}")
 except Exception as e:
-    st.error(f"Error loading file: {e}")
+    st.error(f"讀取檔案失敗: {e}")
