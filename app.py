@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 # 1. 網頁基礎配置
-st.set_page_config(page_title="Toronto Fashion Picks", page_icon="👗", layout="wide")
+st.set_page_config(page_title="CC Picks the World", page_icon="🔍", layout="wide")
 
 # 2. 專業 CSS 樣式
 st.markdown("""
@@ -24,7 +24,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-st.title("👗 Top Fashion Bestsellers in Toronto")
+st.title("🔍Top Fashion Bestsellers in Toronto")
 st.write("Handpicked from Amazon Canada's top-selling fashion essentials.")
 
 # 3. 讀取數據 (確保你已將 Excel 上傳到 GitHub)
@@ -49,3 +49,4 @@ except Exception as e:
     st.info("Check if you have added 'pandas' and 'openpyxl' to your requirements.txt")
 
 st.caption("As an Amazon Associate, I earn from qualifying purchases. #ad")
+
