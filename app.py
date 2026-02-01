@@ -8,15 +8,32 @@ st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wi
 # 2. CSS 樣式：限制圖片高度與縮小顯示
 st.markdown("""
     <style>
+    /* 1. 修改全網頁背景為淺灰色 */
+    .stApp {
+        background-color: #f4f7f6; 
+    }
+    
+    /* 2. 讓產品卡片變成白色，並加入陰影與圓角 */
+    .product-box {
+        background-color: #ffffff; /* 卡片背景為純白 */
+        padding: 20px;
+        margin-bottom: 20px;
+        border-radius: 15px; /* 圓角更明顯一點 */
+        box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 淡淡的陰影 */
+        border: 1px solid #eeeeee;
+    }
+
+    /* 3. 圖片顯示控制 */
     .stImage img {
-        max-height: 180px; /* 縮小圖片高度 */
+        max-height: 180px;
         width: auto;
         object-fit: contain;
         border-radius: 8px;
     }
-    .product-box {
-        padding: 15px;
-        border-bottom: 1px solid #f0f0f0;
+
+    /* 4. 調整 Tab 標籤欄的背景（可選，讓它看起來更乾淨） */
+    .stTabs [data-baseweb="tab-list"] {
+        background-color: transparent;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -107,3 +124,4 @@ else:
                 render_item_list(page_df[page_df['Category'] == cat])
 
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
