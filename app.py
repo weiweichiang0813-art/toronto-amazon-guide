@@ -8,22 +8,38 @@ st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wi
 # 2. CSS 樣式：限制圖片高度與縮小顯示
 st.markdown("""
     <style>
-    /* 1. 修改全網頁背景為淺灰色 */
+    /* 1. 全網頁背景：淺灰色 */
     .stApp {
-        background-color: #f4f7f6; 
-    }
-    
-    /* 2. 讓產品卡片變成白色，並加入陰影與圓角 */
-    .product-box {
-        background-color: #ffffff; /* 卡片背景為純白 */
-        padding: 20px;
-        margin-bottom: 20px;
-        border-radius: 15px; /* 圓角更明顯一點 */
-        box-shadow: 0 4px 10px rgba(0,0,0,0.05); /* 淡淡的陰影 */
-        border: 1px solid #eeeeee;
+        background-color: #f4f7f6;
     }
 
-    /* 3. 圖片顯示控制 */
+    /* 2. 標題與一般文字：改為深灰色/深藍色，確保清晰 */
+    h1, h2, h3 {
+        color: #232f3e !important; /* 深亞馬遜藍 */
+        font-weight: 800 !important;
+    }
+    
+    p, span, label {
+        color: #444444 !important; /* 標準深灰，不刺眼但清晰 */
+    }
+
+    /* 3. 產品卡片：純白背景 + 陰影，讓它從灰色背景跳脫出來 */
+    .product-box {
+        background-color: #ffffff !important;
+        padding: 25px;
+        margin-bottom: 20px;
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 加深陰影，增加立體感 */
+        border: 1px solid #e0e0e0;
+    }
+
+    /* 4. 側邊欄：稍微調暗，區分功能區 */
+    [data-testid="stSidebar"] {
+        background-color: #ffffff;
+        border-right: 1px solid #ddd;
+    }
+
+    /* 5. 圖片控制：限制高度 */
     .stImage img {
         max-height: 180px;
         width: auto;
@@ -31,9 +47,14 @@ st.markdown("""
         border-radius: 8px;
     }
 
-    /* 4. 調整 Tab 標籤欄的背景（可選，讓它看起來更乾淨） */
-    .stTabs [data-baseweb="tab-list"] {
-        background-color: transparent;
+    /* 6. Tabs 選項卡：加強選中時的顏色 */
+    .stTabs [data-baseweb="tab"] {
+        font-weight: bold;
+        color: #666;
+    }
+    .stTabs [aria-selected="true"] {
+        color: #FF9900 !important; /* 選中時顯示亞馬遜橘 */
+        border-bottom-color: #FF9900 !important;
     }
     </style>
     """, unsafe_allow_html=True)
@@ -124,4 +145,5 @@ else:
                 render_item_list(page_df[page_df['Category'] == cat])
 
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
 
