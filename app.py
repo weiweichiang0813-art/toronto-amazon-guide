@@ -1,67 +1,51 @@
 import streamlit as st
+import pandas as pd
 
-# 1. 網頁基礎設定：將佈局設為寬廣模式
-st.set_page_config(page_title="Toronto Living | Curated Picks", page_icon="🍁", layout="wide")
+# 1. 網頁基礎配置
+st.set_page_config(page_title="Toronto Fashion Picks", page_icon="👗", layout="wide")
 
-# 2. 進階 CSS：強化卡片與按鈕視覺
+# 2. 專業 CSS 樣式
 st.markdown("""
     <style>
-    /* 整體背景與字體 */
-    .main { background-color: #ffffff; color: #333333; }
-    
-    /* 產品卡片效果 */
-    .product-card {
+    .main { background-color: #ffffff; }
+    .product-box {
         padding: 20px;
-        border-radius: 15px;
-        background-color: #f8f9fa;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        margin-bottom: 25px;
+        border-radius: 10px;
+        background-color: #f9f9f9;
+        margin-bottom: 20px;
+        border: 1px solid #eee;
     }
-    
-    /* Amazon 橘色按鈕優化 */
     .stLinkButton>a {
         background-color: #FF9900 !important;
         color: white !important;
-        border: none !important;
+        border-radius: 20px !important;
         font-weight: bold !important;
-        border-radius: 25px !important;
-        padding: 0.5rem 2rem !important;
     }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. 標題區塊
-st.title("🍁 Toronto Life: The Ultimate Amazon Guide")
-st.write("Expert-picked essentials for stylish and functional GTA apartment living.")
-st.divider()
+st.title("👗 Top Fashion Bestsellers in Toronto")
+st.write("Handpicked from Amazon Canada's top-selling fashion essentials.")
 
-# 4. 產品區塊 (卡片式佈局)
-def product_row(img_url, title, features, link):
-    with st.container():
-        col1, col2 = st.columns([1, 1.5], gap="large")
-        with col1:
-            st.image("candle.jpg", use_container_width=True)
-        with col2:
-            st.header(title)
-            for f in features:
-                st.write(f"- {f}")
-            st.link_button(f"Check Price on Amazon.ca", link)
-        st.divider()
+# 3. 讀取數據 (確保你已將 Excel 上傳到 GitHub)
+try:
+    df = pd.read_excel("my_products.xlsx")
+    
+    for index, row in df.iterrows():
+        with st.container():
+            col1, col2 = st.columns([1, 2], gap="medium")
+            with col1:
+                # 這裡會讀取你上傳到 GitHub 的圖片
+                st.image(row['Image_URL'], use_container_width=True)
+            with col2:
+                st.header(row['Product_Name'])
+                st.write(f"**Category:** {row['Category']}")
+                st.write(row['Description'])
+                st.link_button("View on Amazon.ca", row['Affiliate_Link'])
+            st.divider()
 
-# 產品列表：請確保圖片連結有效
-product_row(
-    "https://m.media-amazon.com/images/I/71wLp9M6XSL._AC_SL1500_.jpg", 
-    "Aesthetic Candle Warmer Lamp",
-    ["Fire-Safe: Perfect for Toronto Condos", "Cozy Glow for long GTA winters", "Extended candle life"],
-    "https://amzn.to/4k9N2O1"
-)
+except Exception as e:
+    st.error("Please make sure 'my_products.xlsx' is uploaded to your GitHub repository.")
+    st.info("Check if you have added 'pandas' and 'openpyxl' to your requirements.txt")
 
-product_row(
-    "https://m.media-amazon.com/images/I/716m2zS6+pL._AC_SL1500_.jpg",
-    "Ergonomic Laptop Stand",
-    ["Essential for WFH / International Students", "Saves desk space in compact dens", "Improves study posture"],
-    "https://amzn.to/your_link" # 記得換成你的連結
-)
-
-# 5. 法律聲明
 st.caption("As an Amazon Associate, I earn from qualifying purchases. #ad")
