@@ -57,4 +57,37 @@ def render_item_list(data):
             if search_query:
                 st.caption(f"Source: {row[target_col]} | Category: {row['Category']}")
             st.write(row['Description'])
-            st
+            st.link_button("View on Amazon", row['Affiliate_Link'])
+        st.markdown('</div>', unsafe_allow_html=True)
+        st.divider()
+
+# 5. 主內容顯示邏輯 (保持不變)
+if search_query:
+    st.title(f"🔍 Results for: '{search_query}'")
+    search_results = df[
+        df['Product_Name'].str.contains(search_query, case=False, na=False) |
+        df['Description'].str.contains(search_query, case=False, na=False)
+    ]
+    if search_results.empty:
+        st.info("No matching products found.")
+    else:
+        render_item_list(search_results)
+else:
+    st.title(f"Explore: {main_page}")
+    source_map = {
+        "Toronto Base": "Toronto Base",
+        "Amazon Top Choice": "Amazon Top Choice",
+        "CC Picks": "CC Picks"
+    }
+    current_tag = source_map.get(main_page)
+    page_df = df[df[target_col] == current_tag]
+    
+    if page_df.empty:
+        st.warning(f"No items found for {current_tag}.")
+    else:
+        unique_cats = page_df['Category'].unique().tolist()
+        tabs = st.tabs(unique_cats)
+        for i, cat in enumerate(unique_cats):
+            with tabs[i]:
+                cat_df = page_df[page_df['Category'] == cat]
+                render_item_list(cat_df)
