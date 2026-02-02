@@ -5,38 +5,46 @@ import os
 # 1. 網頁配置
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
-# 2. 專業 CSS 樣式：移除 Banner、美化側邊欄與產品卡片
+# 2. 專業 CSS 樣式：美化側邊欄、文字顏色與產品卡片
 st.markdown("""
     <style>
-    /* 1. 全網頁背景：淺灰色 */
+    /* 全網頁背景：淺灰色 */
     .stApp {
         background-color: #f4f7f6;
     }
 
-    /* 2. 側邊欄專屬樣式：白色背景 + 黑色文字 */
+    /* --- 側邊欄美化：白色背景 + 純黑文字 --- */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
     }
     
-    /* 強制側邊欄內所有文字（標題、標籤、按鈕文字）為黑色 */
-    [data-testid="stSidebar"] .stMarkdown p, 
+    /* 強制側邊欄內所有標籤、標題、一般文字為黑色 */
+    [data-testid="stSidebar"] p, 
     [data-testid="stSidebar"] label, 
     [data-testid="stSidebar"] h1, 
     [data-testid="stSidebar"] h2, 
-    [data-testid="stSidebar"] h3 {
+    [data-testid="stSidebar"] h3,
+    [data-testid="stSidebar"] .stMarkdown {
         color: #000000 !important;
+        font-weight: 500;
     }
 
-    /* 3. 搜尋欄位美化：確保在白色側邊欄內清晰 */
-    .stTextInput input {
-        background-color: #f9f9f9 !important;
+    /* 側邊欄搜尋框文字顏色 */
+    [data-testid="stSidebar"] input {
         color: #000000 !important;
-        border: 1px solid #cccccc !important;
-        border-radius: 8px !important;
+        background-color: #ffffff !important;
     }
 
-    /* 4. 產品卡片美化：純白背景 + 陰影 */
+    /* --- 主內容區文字：深藍黑色 --- */
+    .main h1, .main h2, .main h3, .main subheader {
+        color: #232f3e !important;
+    }
+    .main p, .main span, .main div {
+        color: #232f3e !important;
+    }
+
+    /* 產品卡片：純白背景 + 陰影 */
     .product-box {
         background-color: #ffffff !important;
         padding: 25px;
@@ -46,7 +54,7 @@ st.markdown("""
         border: 1px solid #e0e0e0;
     }
 
-    /* 5. 亞馬遜橘色按鈕 */
+    /* 亞馬遜橘色按鈕 */
     .stLinkButton > a {
         background-color: #FF9900 !important;
         color: #ffffff !important;
@@ -62,12 +70,7 @@ st.markdown("""
         color: #ffffff !important;
     }
 
-    /* 6. 主內容區文字顏色：深色確保易讀 */
-    .main h1, .main h2, .main h3, .main p, .main span {
-        color: #232f3e !important;
-    }
-
-    /* 7. 圖片大小限制 */
+    /* 圖片顯示限制 */
     .stImage img {
         max-height: 180px;
         width: auto;
@@ -75,10 +78,9 @@ st.markdown("""
         border-radius: 8px;
     }
 
-    /* 8. Tabs 分類選單顏色 */
+    /* Tabs 選項卡文字顏色 */
     .stTabs [data-baseweb="tab"] {
-        color: #666666 !important;
-        font-weight: bold;
+        color: #444444 !important;
     }
     .stTabs [aria-selected="true"] {
         color: #FF9900 !important;
@@ -87,7 +89,7 @@ st.markdown("""
     </style>
     """, unsafe_allow_html=True)
 
-# 3. 讀取與清理數據
+# 3. 讀取數據
 try:
     df = pd.read_excel("my_products.xlsx")
     df.columns = df.columns.str.strip()
@@ -100,7 +102,7 @@ except Exception as e:
     st.error(f"讀取失敗: {e}")
     st.stop()
 
-# 4. 側邊欄導航 (白色背景 + 黑色文字)
+# 4. 側邊欄導航 (已優化為白色背景/黑色文字)
 with st.sidebar:
     st.title("📍 Navigation")
     main_page = st.radio(
@@ -116,7 +118,7 @@ def render_item_list(data):
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
         col1, col2 = st.columns([1, 4]) 
         with col1:
-            # 自動指向 image 資料夾
+            # 確保路徑指向你的 image/ 資料夾
             img_path = f"image/{row['Image_URL']}"
             st.image(img_path, use_container_width=True)
         with col2:
@@ -127,9 +129,9 @@ def render_item_list(data):
             st.link_button("View on Amazon", row['Affiliate_Link'])
         st.markdown('</div>', unsafe_allow_html=True)
 
-# 6. 主要顯示邏輯 (已移除頂部 Banner)
+# 6. 主要顯示邏輯
 if search_query:
-    st.title(f"🔍 Results for: '{search_query}'")
+    st.title(f"🔍 Results: '{search_query}'")
     results = df[df['Product_Name'].str.contains(search_query, case=False, na=False) | 
               df['Description'].str.contains(search_query, case=False, na=False)]
     if results.empty:
@@ -137,9 +139,9 @@ if search_query:
     else:
         render_item_list(results)
 else:
-    # 這裡直接顯示頁面標題，不再有 Banner
     st.title(f"Explore: {main_page}")
     
+    # 建立網頁按鈕與 Excel 內容的對應 (請確保內容一致)
     source_map = {
         "Toronto Base": "Toronto Base", 
         "Amazon Top Choice": "Amazon Top Choice", 
@@ -148,7 +150,7 @@ else:
     current_tag = source_map.get(main_page)
     page_df = df[df[target_col] == current_tag]
     
-    # 簡寫相容處理 (如 Toronto)
+    # 處理可能的簡寫 (如 Toronto)
     if page_df.empty:
         short_tag = main_page.split()[0]
         page_df = df[df[target_col] == short_tag]
