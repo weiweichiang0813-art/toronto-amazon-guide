@@ -6,6 +6,13 @@ import os
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
 # 2. CSS 樣式：限制圖片高度與縮小顯示
+從你的截圖 image_fcc4ed.png 來看，雖然背景顏色改好了，但因為文字和按鈕的顏色太淺（接近白色），在淺色背景下變得幾乎看不見。
+
+為了讓搜尋欄位、按鈕以及文字都能清晰顯現，我更新了 CSS 樣式。這次我們將按鈕設為顯眼的亞馬遜橘色，並確保所有文字都是深灰色。
+
+🛠️ 最終美化版 CSS（請替換原本的 style 區塊）
+Python
+# 2. CSS 樣式：美化背景、文字、按鈕與搜尋欄
 st.markdown("""
     <style>
     /* 1. 全網頁背景：淺灰色 */
@@ -13,33 +20,56 @@ st.markdown("""
         background-color: #f4f7f6;
     }
 
-    /* 2. 標題與一般文字：改為深灰色/深藍色，確保清晰 */
-    h1, h2, h3 {
-        color: #232f3e !important; /* 深亞馬遜藍 */
-        font-weight: 800 !important;
-    }
-    
-    p, span, label {
-        color: #444444 !important; /* 標準深灰，不刺眼但清晰 */
+    /* 2. 所有標題與一般文字：改為深灰色，確保清晰 */
+    h1, h2, h3, p, span, label, .stMarkdown {
+        color: #232f3e !important; /* 深亞馬遜藍/黑 */
     }
 
-    /* 3. 產品卡片：純白背景 + 陰影，讓它從灰色背景跳脫出來 */
+    /* 3. 搜尋欄位 (Input Box) 修改 */
+    .stTextInput input {
+        background-color: #ffffff !important; /* 白色背景 */
+        color: #232f3e !important;           /* 深色文字 */
+        border: 1px solid #d0d0d0 !important;
+        border-radius: 8px !important;
+    }
+
+    /* 4. 亞馬遜橘色按鈕 (View on Amazon) */
+    .stLinkButton > a {
+        background-color: #FF9900 !important; /* 亞馬遜經典橘 */
+        color: #ffffff !important;           /* 白色字 */
+        border-radius: 20px !important;
+        border: none !important;
+        padding: 8px 25px !important;
+        font-weight: bold !important;
+        text-decoration: none !important;
+        display: inline-block;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .stLinkButton > a:hover {
+        background-color: #e68a00 !important; /* 滑鼠移上去變深橘色 */
+        color: #ffffff !important;
+    }
+
+    /* 5. 產品卡片：純白背景 + 陰影 */
     .product-box {
         background-color: #ffffff !important;
         padding: 25px;
-        margin-bottom: 20px;
+        margin-bottom: 25px;
         border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08); /* 加深陰影，增加立體感 */
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         border: 1px solid #e0e0e0;
     }
 
-    /* 4. 側邊欄：稍微調暗，區分功能區 */
-    [data-testid="stSidebar"] {
+    /* 6. 側邊欄文字顏色調整 */
+    section[data-testid="stSidebar"] {
         background-color: #ffffff;
-        border-right: 1px solid #ddd;
+    }
+    section[data-testid="stSidebar"] .stMarkdown p, 
+    section[data-testid="stSidebar"] label {
+        color: #232f3e !important;
     }
 
-    /* 5. 圖片控制：限制高度 */
+    /* 7. 圖片大小限制 */
     .stImage img {
         max-height: 180px;
         width: auto;
@@ -47,13 +77,12 @@ st.markdown("""
         border-radius: 8px;
     }
 
-    /* 6. Tabs 選項卡：加強選中時的顏色 */
+    /* 8. Tabs 顏色：選中時變橘色 */
     .stTabs [data-baseweb="tab"] {
-        font-weight: bold;
-        color: #666;
+        color: #666666 !important;
     }
     .stTabs [aria-selected="true"] {
-        color: #FF9900 !important; /* 選中時顯示亞馬遜橘 */
+        color: #FF9900 !important;
         border-bottom-color: #FF9900 !important;
     }
     </style>
@@ -145,5 +174,6 @@ else:
                 render_item_list(page_df[page_df['Category'] == cat])
 
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
 
 
