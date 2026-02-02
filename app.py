@@ -5,15 +5,14 @@ import os
 # 1. 網頁配置
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
-# 初始化 Session State 用於管理搜尋紀錄
+# 初始化 Session State 用於切換分類時清空搜尋
 if 'search_val' not in st.session_state:
     st.session_state.search_val = ""
 
-# 定義切換分類時清空搜尋的函數
 def clear_search():
     st.session_state.search_val = ""
 
-# 2. 專業 CSS 樣式：調整柔和按鈕顏色與咖啡色 Tabs
+# 2. 終極 CSS 樣式：美化最上方 Header 文字、側邊欄與整體配色
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -21,12 +20,22 @@ st.markdown("""
         background-color: #f4f7f6 !important;
     }
 
-    /* 1. 修改最上方 Top Bar 為白色 */
+    /* --- 1. 最上方 Top Bar (stHeader) 美化 --- */
     header[data-testid="stHeader"] {
         background-color: #ffffff !important;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    
+    /* 強制 Header 內所有圖示、文字與按鈕顏色變黑 */
+    header[data-testid="stHeader"] button, 
+    header[data-testid="stSidebarNav"] span,
+    header[data-testid="stHeader"] a,
+    header[data-testid="stHeader"] div {
+        color: #000000 !important;
+        fill: #000000 !important; /* 針對 SVG 圖示 */
     }
 
-    /* 2. 側邊欄：白色背景 + 純黑文字 */
+    /* --- 2. 側邊欄：白色背景 + 純黑文字 --- */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
@@ -36,7 +45,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* 3. 搜尋欄位：白底黑字，徹底解決撞色 */
+    /* --- 3. 搜尋欄位：白底黑字，避免撞色 --- */
     div[data-testid="stSidebar"] .stTextInput input {
         background-color: #ffffff !important;
         color: #000000 !important;
@@ -44,42 +53,32 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* 4. 強制主內容區所有級別標題與文字變黑 */
+    /* --- 4. 主內容區文字黑化 (Explore 標題與內文) --- */
     .main h1, .main h2, .main h3, h1, h2, h3, .main p, .main span, .main div {
         color: #000000 !important;
         font-weight: 500;
     }
     h1 { font-weight: 800 !important; }
 
-    /* 5. 產品卡片 */
+    /* --- 5. 產品卡片與柔和按鈕 --- */
     .product-box {
         background-color: #ffffff !important;
-        padding: 25px;
-        margin-bottom: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 1px solid #eef0f2;
+        padding: 25px; margin-bottom: 25px; border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #eef0f2;
     }
 
-    /* 6. 修改按鈕為：柔和莫蘭迪沙褐色 (#A68966) */
     .stLinkButton > a {
-        background-color: #A68966 !important; /* 柔和的沙褐棕色 */
+        background-color: #A68966 !important; /* 柔和沙褐色 */
         color: #ffffff !important;
         border-radius: 25px !important;
         padding: 10px 30px !important;
         font-weight: bold !important;
         text-decoration: none !important;
         display: inline-block;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         border: none !important;
     }
-    .stLinkButton > a:hover {
-        background-color: #8D7456 !important; /* 滑鼠移上去稍微變深 */
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    }
 
-    /* 7. 分類 Tabs 樣式：深咖啡色 (#5D4037) */
+    /* --- 6. 分類 Tabs：深咖啡色 --- */
     .stTabs [data-baseweb="tab"] {
         color: #444444 !important;
         font-weight: bold !important;
@@ -89,7 +88,7 @@ st.markdown("""
         border-bottom-color: #5D4037 !important;
     }
 
-    /* 圖片顯示限制 */
+    /* 圖片高度控制 */
     .stImage img { max-height: 180px; width: auto; object-fit: contain; border-radius: 8px; }
     </style>
     """, unsafe_allow_html=True)
