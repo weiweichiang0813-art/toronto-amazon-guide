@@ -13,7 +13,7 @@ if 'search_val' not in st.session_state:
 def clear_search():
     st.session_state.search_val = ""
 
-# 2. 專業 CSS 樣式：調整深色底線、Header 黑化與文字強制顯色
+# 2. 終極 CSS 樣式：修復 Top Bar 右側、移除 Tab 底色、黑化商品說明
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -21,11 +21,13 @@ st.markdown("""
         background-color: #f4f7f6 !important;
     }
 
-    /* --- 1. 最上方 Top Bar (Header) 徹底黑化 --- */
+    /* --- 1. 最上方 Top Bar (Header) 全方位黑化 --- */
+    /* 這裡鎖定左側導覽與右側 GitHub/Share 等所有組件 */
     header[data-testid="stHeader"] {
         background-color: #ffffff !important;
         border-bottom: 1px solid #e0e0e0;
     }
+    /* 強制 Header 內所有圖示、按鈕、文字均為黑色 */
     header[data-testid="stHeader"] * {
         color: #000000 !important;
         fill: #000000 !important;
@@ -40,21 +42,25 @@ st.markdown("""
         color: #000000 !important;
         font-weight: 600 !important;
     }
-
-    /* --- 3. 搜尋欄位：白底黑字 --- */
     div[data-testid="stSidebar"] .stTextInput input {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 2px solid #d0d0d0 !important;
     }
 
-    /* --- 4. 主內容區文字黑化 (確保 Explore 標題清晰) --- */
-    h1, h2, h3, .main p, .main span, .main div, [data-testid="stMarkdownContainer"] h1 {
+    /* --- 3. 商品頁面文字黑化 (關鍵修復) --- */
+    /* 強制主標題、產品標題、商品說明全部變黑 */
+    h1, h2, h3, .main p, .main span, .main div, [data-testid="stMarkdownContainer"] p {
         color: #000000 !important;
         font-weight: bold !important;
     }
+    /* 特別針對商品說明文字 (Description) */
+    .product-box p, .product-box div {
+        color: #000000 !important;
+        font-weight: 400 !important;
+    }
 
-    /* --- 5. 產品卡片與柔和沙褐色按鈕 --- */
+    /* --- 4. 產品卡片與柔和按鈕 --- */
     .product-box {
         background-color: #ffffff !important;
         padding: 25px; margin-bottom: 25px; border-radius: 15px;
@@ -68,14 +74,21 @@ st.markdown("""
         border: none !important;
     }
 
-    /* --- 6. 分類 Tabs 優化：深咖啡色文字 + 同色系深色底線 --- */
+    /* --- 5. 分類 Tabs 優化：移除底色，僅保留深咖啡文字與底線 --- */
     .stTabs [data-baseweb="tab"] {
         color: #444444 !important;
         font-weight: bold !important;
+        background-color: transparent !important; /* 確保沒有底色色塊 */
     }
     .stTabs [aria-selected="true"] {
         color: #5D4037 !important; /* 深咖啡色文字 */
-        border-bottom: 3px solid #3E2723 !important; /* 更深一點的咖啡色底線 */
+        border-bottom: 3px solid #3E2723 !important; /* 深咖啡色底線 */
+        background-color: transparent !important;
+    }
+    /* 移除 Streamlit 預設的 Tab Hover 背景色 */
+    .stTabs [data-baseweb="tab"]:hover {
+        background-color: transparent !important;
+        color: #5D4037 !important;
     }
 
     /* 圖片顯示限制 */
@@ -93,7 +106,7 @@ try:
 except Exception as e:
     st.error(f"Excel 讀取失敗: {e}"); st.stop()
 
-# 4. 側邊欄導航
+# 4. 側邊欄導航 (整合清空搜尋功能)
 with st.sidebar:
     st.title("📍 Navigation")
     main_page = st.radio(
@@ -115,7 +128,7 @@ def render_item_list(data):
             st.subheader(row['Product_Name'])
             if st.session_state.search_val:
                 st.caption(f"Source: {row[target_col]} | Category: {row['Category']}")
-            st.write(row['Description'])
+            st.write(row['Description']) # 這裡現在會顯示為黑色
             st.link_button("View on Amazon", row['Affiliate_Link'])
         st.markdown('</div>', unsafe_allow_html=True)
 
