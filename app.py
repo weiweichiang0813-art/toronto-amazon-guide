@@ -5,34 +5,30 @@ import os
 # 1. 網頁配置
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
-# 初始化 Session State 用於管理搜尋紀錄
+# 初始化 Session State
 if 'search_val' not in st.session_state:
     st.session_state.search_val = ""
 
-# 定義切換分類時清空搜尋的函數
 def clear_search():
     st.session_state.search_val = ""
 
-# 2. 終極 CSS 樣式：修復商品說明顏色、Top Bar 右側與移除 Tab 背景色
+# 2. 精準 CSS 樣式：黑化說明文字、恢復字體粗細、修正 Header
 st.markdown("""
     <style>
-    /* 全網頁背景：淺灰色 */
-    .stApp {
-        background-color: #f4f7f6 !important;
-    }
+    /* 全網頁背景 */
+    .stApp { background-color: #f4f7f6 !important; }
 
-    /* --- 1. 最上方 Top Bar (Header) 徹底黑化 --- */
+    /* --- 1. Top Bar (Header) 徹底修復 --- */
     header[data-testid="stHeader"] {
         background-color: #ffffff !important;
         border-bottom: 1px solid #e0e0e0;
     }
-    /* 強制 Header 內所有按鈕、圖示（包含右側 GitHub/Share）變黑 */
     header[data-testid="stHeader"] * {
         color: #000000 !important;
         fill: #000000 !important;
     }
 
-    /* --- 2. 側邊欄：白色背景 + 純黑文字 --- */
+    /* --- 2. 側邊欄修復 --- */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
@@ -47,21 +43,27 @@ st.markdown("""
         border: 2px solid #d0d0d0 !important;
     }
 
-    /* --- 3. 商品頁面文字黑化 (關鍵修復) --- */
-    /* 強制 Explore 標題、產品名稱變黑 */
-    h1, h2, h3, [data-testid="stHeader"] {
+    /* --- 3. 商品內容區文字顏色修復 (重點) --- */
+    /* 大標題 Explore 保持加粗 */
+    .main h1, h1 {
         color: #000000 !important;
-        font-weight: bold !important;
+        font-weight: 700 !important;
     }
     
-    /* 【修復重點】強制商品卡片內的說明文字變黑 */
-    .product-box p, .product-box span, .product-box div, .main p {
+    /* 產品名稱保持適度加粗 */
+    .main h3, h3 {
         color: #000000 !important;
-        font-weight: 400 !important;
-        opacity: 1 !important;
+        font-weight: 600 !important;
     }
 
-    /* --- 4. 產品卡片與柔和沙褐色按鈕 --- */
+    /* 商品說明文字：強制黑化，並恢復為原本的 Normal 粗細 */
+    .product-box p, .product-box div, .main p, [data-testid="stMarkdownContainer"] p {
+        color: #000000 !important;
+        font-weight: 400 !important; /* 恢復為 Normal */
+        line-height: 1.6;
+    }
+
+    /* --- 4. 產品卡片與柔和按鈕 --- */
     .product-box {
         background-color: #ffffff !important;
         padding: 25px; margin-bottom: 25px; border-radius: 15px;
@@ -71,24 +73,27 @@ st.markdown("""
         background-color: #A68966 !important; 
         color: #ffffff !important;
         border-radius: 25px !important;
-        font-weight: bold !important;
-        border: none !important;
+        font-weight: 600 !important;
         padding: 10px 30px !important;
+        text-decoration: none !important;
     }
 
-    /* --- 5. 分類 Tabs 優化：深咖啡色，移除底色色塊 --- */
+    /* --- 5. 分類 Tabs：移除底色背景，恢復簡約 --- */
     .stTabs [data-baseweb="tab"] {
         color: #444444 !important;
-        font-weight: bold !important;
+        font-weight: 600 !important;
         background-color: transparent !important;
     }
     .stTabs [aria-selected="true"] {
-        color: #5D4037 !important; /* 深咖啡色文字 */
-        border-bottom: 3px solid #3E2723 !important; /* 深咖啡色底線 */
+        color: #5D4037 !important;
+        border-bottom: 3px solid #3E2723 !important;
+        background-color: transparent !important;
+    }
+    .stTabs [data-baseweb="tab"]:hover {
         background-color: transparent !important;
     }
 
-    /* 圖片顯示限制 */
+    /* 圖片設定 */
     .stImage img { max-height: 180px; width: auto; object-fit: contain; border-radius: 8px; }
     </style>
     """, unsafe_allow_html=True)
@@ -104,7 +109,7 @@ try:
 except Exception as e:
     st.error(f"Excel 讀取失敗: {e}"); st.stop()
 
-# 4. 側邊欄導航 (整合清空搜尋功能)
+# 4. 側邊欄導航
 with st.sidebar:
     st.title("📍 Navigation")
     main_page = st.radio(
@@ -122,17 +127,15 @@ with st.sidebar:
 # 5. 商品渲染函數
 def render_item_list(data):
     for _, row in data.iterrows():
-        # 套用 .product-box 樣式
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
         col1, col2 = st.columns([1, 4]) 
         with col1:
-            img_path = f"image/{row['Image_URL']}"
-            st.image(img_path, use_container_width=True)
+            st.image(f"image/{row['Image_URL']}", use_container_width=True)
         with col2:
             st.subheader(row['Product_Name'])
             if st.session_state.search_val:
                 st.caption(f"Source: {row[target_col]} | Category: {row['Category']}")
-            # 這裡的文字現在會被強制設為黑色
+            # 商品說明現在會是黑色的，且粗細適中
             st.write(row['Description'])
             st.link_button("View on Amazon", row['Affiliate_Link'])
         st.markdown('</div>', unsafe_allow_html=True)
