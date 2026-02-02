@@ -5,7 +5,7 @@ import os
 # 1. 網頁配置
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
-# 2. 專業 CSS 樣式：美化最上方 Bar、側邊欄、文字與搜尋欄
+# 2. 終極 CSS 樣式：徹底修復搜尋框撞色與文字看不見的問題
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -18,13 +18,13 @@ st.markdown("""
         background-color: #ffffff !important;
     }
 
-    /* 2. 側邊欄：白色背景 + 純黑文字 */
+    /* 2. 側邊欄：純白背景 + 純黑文字 */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
     }
     
-    /* 強制側邊欄內所有文字為純黑色 */
+    /* 強制側邊欄內所有文字 (標籤、標題、選項) 為純黑色 */
     [data-testid="stSidebar"] p, 
     [data-testid="stSidebar"] label, 
     [data-testid="stSidebar"] h1, 
@@ -35,23 +35,25 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* 3. 搜尋欄位美化：解決撞色問題 */
-    /* 強制側邊欄內的輸入框為白底黑字 */
-    div[data-testid="stSidebar"] .stTextInput input {
+    /* 3. 搜尋欄位 (Searching Bar) 徹底修復：強制白底黑字 */
+    /* 這裡使用多重選擇器來確保蓋過 Streamlit 預設樣式 */
+    section[data-testid="stSidebar"] .stTextInput input {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 2px solid #d0d0d0 !important;
         border-radius: 8px !important;
+        -webkit-text-fill-color: #000000 !important; /* 確保在手機/平板上也顯示黑字 */
     }
     
-    /* 修改提示文字顏色 */
-    div[data-testid="stSidebar"] .stTextInput input::placeholder {
+    /* 修改搜尋框提示文字 (Placeholder) 顏色 */
+    section[data-testid="stSidebar"] .stTextInput input::placeholder {
         color: #888888 !important;
     }
 
     /* 4. 主內容區文字黑化 */
     .main h1, .main h2, .main h3, .main p, .main span, .main div {
         color: #000000 !important;
+        font-weight: 500;
     }
 
     /* 5. 產品卡片美化 */
@@ -64,7 +66,7 @@ st.markdown("""
         border: 1px solid #e0e0e0;
     }
 
-    /* 6. 亞馬遜橘色按鈕 */
+    /* 6. 亞馬遜橘色按鈕 (保持原樣) */
     .stLinkButton > a {
         background-color: #FF9900 !important;
         color: #ffffff !important;
@@ -77,7 +79,6 @@ st.markdown("""
     }
     .stLinkButton > a:hover {
         background-color: #e68a00 !important;
-        transform: scale(1.02);
     }
 
     /* 圖片高度與 Tabs 顏色 */
@@ -116,7 +117,6 @@ def render_item_list(data):
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
         col1, col2 = st.columns([1, 4]) 
         with col1:
-            # 圖片路徑指向 image/ 資料夾
             img_path = f"image/{row['Image_URL']}"
             st.image(img_path, use_container_width=True)
         with col2:
