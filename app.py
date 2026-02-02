@@ -13,7 +13,7 @@ if 'search_val' not in st.session_state:
 def clear_search():
     st.session_state.search_val = ""
 
-# 2. 專業 CSS 樣式：調整深咖啡色 Tabs 與文字黑化
+# 2. 專業 CSS 樣式：調整柔和按鈕顏色與咖啡色 Tabs
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -36,7 +36,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* 3. 搜尋欄位：白底黑字 */
+    /* 3. 搜尋欄位：白底黑字，徹底解決撞色 */
     div[data-testid="stSidebar"] .stTextInput input {
         background-color: #ffffff !important;
         color: #000000 !important;
@@ -44,7 +44,7 @@ st.markdown("""
         border-radius: 8px !important;
     }
 
-    /* 4. 強制主內容區所有級別標題與文字變黑 (解決 Explore 看不見的問題) */
+    /* 4. 強制主內容區所有級別標題與文字變黑 */
     .main h1, .main h2, .main h3, h1, h2, h3, .main p, .main span, .main div {
         color: #000000 !important;
         font-weight: 500;
@@ -57,33 +57,40 @@ st.markdown("""
         padding: 25px;
         margin-bottom: 25px;
         border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        border: 1px solid #e0e0e0;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border: 1px solid #eef0f2;
     }
 
-    /* 6. 亞馬遜橘色按鈕 */
+    /* 6. 修改按鈕為：柔和莫蘭迪沙褐色 (#A68966) */
     .stLinkButton > a {
-        background-color: #FF9900 !important;
+        background-color: #A68966 !important; /* 柔和的沙褐棕色 */
         color: #ffffff !important;
-        border-radius: 20px !important;
-        padding: 12px 35px !important;
+        border-radius: 25px !important;
+        padding: 10px 30px !important;
         font-weight: bold !important;
         text-decoration: none !important;
         display: inline-block;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        border: none !important;
+    }
+    .stLinkButton > a:hover {
+        background-color: #8D7456 !important; /* 滑鼠移上去稍微變深 */
+        transform: translateY(-1px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
     }
 
-    /* 7. 分類 Tabs 樣式修改：改為深咖啡色 */
+    /* 7. 分類 Tabs 樣式：深咖啡色 (#5D4037) */
     .stTabs [data-baseweb="tab"] {
-        color: #444444 !important; /* 未選中時的顏色 */
+        color: #444444 !important;
         font-weight: bold !important;
     }
     .stTabs [aria-selected="true"] {
-        color: #5D4037 !important; /* 選中時的深咖啡色文字 */
-        border-bottom-color: #5D4037 !important; /* 選中時的深咖啡色底線 */
+        color: #5D4037 !important;
+        border-bottom-color: #5D4037 !important;
     }
 
     /* 圖片顯示限制 */
-    .stImage img { max-height: 200px; width: auto; object-fit: contain; border-radius: 10px; }
+    .stImage img { max-height: 180px; width: auto; object-fit: contain; border-radius: 8px; }
     </style>
     """, unsafe_allow_html=True)
 
@@ -105,12 +112,12 @@ with st.sidebar:
         "Select Collection",
         ["Toronto Base", "Amazon Top Choice", "CC Picks"],
         index=0,
-        on_change=clear_search # 點選即清空搜尋內容
+        on_change=clear_search
     )
     search_query = st.text_input(
         "🔍 Search ALL Products", 
         placeholder="Search anything...",
-        key="search_val" # 綁定 Session State
+        key="search_val"
     )
 
 # 5. 商品渲染函數
