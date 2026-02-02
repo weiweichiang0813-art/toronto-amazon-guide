@@ -5,7 +5,7 @@ import os
 # 1. 網頁配置
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
-# 2. 終極 CSS 樣式：解決所有文字不清楚的問題
+# 2. 終極 CSS 樣式：徹底強制所有標題與文字變黑
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -13,19 +13,20 @@ st.markdown("""
         background-color: #f4f7f6 !important;
     }
 
-    /* --- 核心修復：強制主內容區所有文字變黑 --- */
-    /* 這裡鎖定大標題、副標題、所有段落與 span */
-    .main h1, .main h2, .main h3, .main h4, .main p, .main span, .main div {
-        color: #000000 !important;
-    }
-    
-    /* 針對產品名稱特別加粗加黑 */
-    [data-testid="stMarkdownContainer"] h3 {
+    /* --- 核心修復：使用最廣泛的選擇器強制黑化 --- */
+    /* 1. 強制主內容區所有級別的標題 (h1, h2, h3) 變純黑 */
+    .main h1, .main h2, .main h3, .main h4, h1, h2, h3 {
         color: #000000 !important;
         font-weight: 800 !important;
     }
+    
+    /* 2. 強制所有透過 st.write 或 st.markdown 產生的文字變純黑 */
+    .main p, .main span, .main div, [data-testid="stMarkdownContainer"] p {
+        color: #000000 !important;
+        font-weight: 500 !important;
+    }
 
-    /* --- 側邊欄美化：純白背景 + 純黑文字 --- */
+    /* 3. 側邊欄：白色背景 + 純黑文字 */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
@@ -35,7 +36,7 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* --- 搜尋框：白底黑字 --- */
+    /* 4. 搜尋框：解決撞色 (白底黑字) */
     div[data-testid="stSidebar"] .stTextInput input {
         background-color: #ffffff !important;
         color: #000000 !important;
@@ -82,13 +83,13 @@ try:
 except Exception as e:
     st.error(f"Excel 讀取失敗: {e}"); st.stop()
 
-# 4. 側邊欄
+# 4. 側邊欄導航
 with st.sidebar:
     st.title("📍 Navigation")
     main_page = st.radio("Select Collection", ["Toronto Base", "Amazon Top Choice", "CC Picks"], index=0)
     search_query = st.text_input("🔍 Search ALL Products", placeholder="Search anything...")
 
-# 5. 商品渲染
+# 5. 商品渲染函數
 def render_item_list(data):
     for _, row in data.iterrows():
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
@@ -103,15 +104,15 @@ def render_item_list(data):
             st.link_button("View on Amazon", row['Affiliate_Link'])
         st.markdown('</div>', unsafe_allow_html=True)
 
-# 6. 邏輯
+# 6. 主要顯示邏輯
 if search_query:
-    st.title(f"🔍 Results: '{search_query}'")
+    st.title(f"🔍 Results: '{search_query}'") # 這裡的 title 也會變黑
     results = df[df['Product_Name'].str.contains(search_query, case=False, na=False) | 
               df['Description'].str.contains(search_query, case=False, na=False)]
     if results.empty: st.info("No products found.")
     else: render_item_list(results)
 else:
-    st.title(f"Explore: {main_page}")
+    st.title(f"Explore: {main_page}") # 關鍵修復點：這個標題現在會變黑
     source_map = {"Toronto Base": "Toronto Base", "Amazon Top Choice": "Amazon Top Choice", "CC Picks": "CC Picks"}
     page_df = df[df[target_col] == source_map.get(main_page)]
     if page_df.empty:
@@ -123,4 +124,4 @@ else:
             with tabs[i]: render_item_list(page_df[page_df['Category'] == cat])
 
 st.divider()
-st.caption("© 2026 CC Picks the World | Amazon Associate Disclaimer.")
+st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
