@@ -13,7 +13,7 @@ if 'search_val' not in st.session_state:
 def clear_search():
     st.session_state.search_val = ""
 
-# 2. 專業 CSS 樣式：調整柔和按鈕顏色與咖啡色 Tabs
+# 2. 終極 CSS 樣式：修復商品說明顏色、Top Bar 右側與移除 Tab 背景色
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -21,12 +21,18 @@ st.markdown("""
         background-color: #f4f7f6 !important;
     }
 
-    /* 1. 修改最上方 Top Bar 為白色 */
+    /* --- 1. 最上方 Top Bar (Header) 徹底黑化 --- */
     header[data-testid="stHeader"] {
         background-color: #ffffff !important;
+        border-bottom: 1px solid #e0e0e0;
+    }
+    /* 強制 Header 內所有按鈕、圖示（包含右側 GitHub/Share）變黑 */
+    header[data-testid="stHeader"] * {
+        color: #000000 !important;
+        fill: #000000 !important;
     }
 
-    /* 2. 側邊欄：白色背景 + 純黑文字 */
+    /* --- 2. 側邊欄：白色背景 + 純黑文字 --- */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
@@ -35,58 +41,51 @@ st.markdown("""
         color: #000000 !important;
         font-weight: 600 !important;
     }
-
-    /* 3. 搜尋欄位：白底黑字，徹底解決撞色 */
     div[data-testid="stSidebar"] .stTextInput input {
         background-color: #ffffff !important;
         color: #000000 !important;
         border: 2px solid #d0d0d0 !important;
-        border-radius: 8px !important;
     }
 
-    /* 4. 強制主內容區所有級別標題與文字變黑 */
-    .main h1, .main h2, .main h3, h1, h2, h3, .main p, .main span, .main div {
+    /* --- 3. 商品頁面文字黑化 (關鍵修復) --- */
+    /* 強制 Explore 標題、產品名稱變黑 */
+    h1, h2, h3, [data-testid="stHeader"] {
         color: #000000 !important;
-        font-weight: 500;
+        font-weight: bold !important;
     }
-    h1 { font-weight: 800 !important; }
+    
+    /* 【修復重點】強制商品卡片內的說明文字變黑 */
+    .product-box p, .product-box span, .product-box div, .main p {
+        color: #000000 !important;
+        font-weight: 400 !important;
+        opacity: 1 !important;
+    }
 
-    /* 5. 產品卡片 */
+    /* --- 4. 產品卡片與柔和沙褐色按鈕 --- */
     .product-box {
         background-color: #ffffff !important;
-        padding: 25px;
-        margin-bottom: 25px;
-        border-radius: 15px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        border: 1px solid #eef0f2;
+        padding: 25px; margin-bottom: 25px; border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); border: 1px solid #eef0f2;
     }
-
-    /* 6. 修改按鈕為：柔和莫蘭迪沙褐色 (#A68966) */
     .stLinkButton > a {
-        background-color: #A68966 !important; /* 柔和的沙褐棕色 */
+        background-color: #A68966 !important; 
         color: #ffffff !important;
         border-radius: 25px !important;
-        padding: 10px 30px !important;
         font-weight: bold !important;
-        text-decoration: none !important;
-        display: inline-block;
-        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         border: none !important;
-    }
-    .stLinkButton > a:hover {
-        background-color: #8D7456 !important; /* 滑鼠移上去稍微變深 */
-        transform: translateY(-1px);
-        box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        padding: 10px 30px !important;
     }
 
-    /* 7. 分類 Tabs 樣式：深咖啡色 (#5D4037) */
+    /* --- 5. 分類 Tabs 優化：深咖啡色，移除底色色塊 --- */
     .stTabs [data-baseweb="tab"] {
         color: #444444 !important;
         font-weight: bold !important;
+        background-color: transparent !important;
     }
     .stTabs [aria-selected="true"] {
-        color: #5D4037 !important;
-        border-bottom-color: #5D4037 !important;
+        color: #5D4037 !important; /* 深咖啡色文字 */
+        border-bottom: 3px solid #3E2723 !important; /* 深咖啡色底線 */
+        background-color: transparent !important;
     }
 
     /* 圖片顯示限制 */
@@ -123,6 +122,7 @@ with st.sidebar:
 # 5. 商品渲染函數
 def render_item_list(data):
     for _, row in data.iterrows():
+        # 套用 .product-box 樣式
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
         col1, col2 = st.columns([1, 4]) 
         with col1:
@@ -132,6 +132,7 @@ def render_item_list(data):
             st.subheader(row['Product_Name'])
             if st.session_state.search_val:
                 st.caption(f"Source: {row[target_col]} | Category: {row['Category']}")
+            # 這裡的文字現在會被強制設為黑色
             st.write(row['Description'])
             st.link_button("View on Amazon", row['Affiliate_Link'])
         st.markdown('</div>', unsafe_allow_html=True)
