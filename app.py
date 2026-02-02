@@ -5,7 +5,7 @@ import os
 # 1. 網頁配置
 st.set_page_config(page_title="CC Picks the World", page_icon="🌎", layout="wide")
 
-# 2. 終極 CSS 樣式：解決文字看不見的問題
+# 2. 終極 CSS 樣式：美化最上方 Bar、側邊欄與所有文字
 st.markdown("""
     <style>
     /* 全網頁背景：淺灰色 */
@@ -13,19 +13,23 @@ st.markdown("""
         background-color: #f4f7f6 !important;
     }
 
-    /* --- 1. 全局文字強制黑化 --- */
-    /* 這裡鎖定所有標題、一般文字、標籤 */
+    /* --- 1. 修改最上方 Top Bar (stHeader) 為白色 --- */
+    header[data-testid="stHeader"] {
+        background-color: #ffffff !important;
+    }
+
+    /* --- 2. 全局文字強制黑化 --- */
+    /* 確保所有標題、一般文字、標籤在淺灰背景下都清晰 */
     html, body, [class*="st-"] {
         color: #000000 !important;
     }
 
-    /* --- 2. 側邊欄優化：白色背景 + 純黑文字 --- */
+    /* --- 3. 側邊欄優化：白色背景 + 純黑文字 --- */
     [data-testid="stSidebar"] {
         background-color: #ffffff !important;
         border-right: 1px solid #e0e0e0;
     }
     
-    /* 強制側邊欄內的所有文字為黑色 */
     [data-testid="stSidebar"] p, 
     [data-testid="stSidebar"] label, 
     [data-testid="stSidebar"] h1, 
@@ -37,30 +41,15 @@ st.markdown("""
         font-weight: 600 !important;
     }
 
-    /* 側邊欄搜尋框文字顏色 */
-    [data-testid="stSidebar"] input {
-        color: #000000 !important;
-        background-color: #f9f9f9 !important;
-    }
-
-    /* --- 3. 主內容區文字黑化 --- */
-    /* 強制主頁面大標題 (Explore: ...) 為黑色 */
-    .main h1 {
-        color: #000000 !important;
-        font-weight: 800 !important;
-    }
-    
-    /* 強制產品名稱與分類標籤為黑色 */
-    .main h2, .main h3, .main [data-testid="stHeader"] {
+    /* --- 4. 主內容區文字黑化 --- */
+    .main h1, .main h2, .main h3, .main [data-testid="stHeader"] {
         color: #000000 !important;
     }
-    
-    /* 強制產品敘述與一般段落為黑色 */
     .main p, .main span, .main div {
         color: #000000 !important;
     }
 
-    /* --- 4. 產品卡片美化 --- */
+    /* --- 5. 產品卡片美化 --- */
     .product-box {
         background-color: #ffffff !important;
         padding: 25px;
@@ -70,7 +59,7 @@ st.markdown("""
         border: 1px solid #e0e0e0;
     }
 
-    /* --- 5. 按鈕：保持橘色不變 --- */
+    /* --- 6. 亞馬遜橘色按鈕 (不變色) --- */
     .stLinkButton > a {
         background-color: #FF9900 !important;
         color: #ffffff !important;
@@ -86,36 +75,20 @@ st.markdown("""
         transform: scale(1.02);
     }
 
-    /* 圖片高度控制 */
-    .stImage img {
-        max-height: 200px;
-        width: auto;
-        object-fit: contain;
-        border-radius: 10px;
-    }
-
-    /* Tabs 文字顏色 */
-    .stTabs [data-baseweb="tab"] {
-        color: #000000 !important;
-        font-weight: bold !important;
-    }
-    .stTabs [aria-selected="true"] {
-        color: #FF9900 !important;
-        border-bottom-color: #FF9900 !important;
-    }
+    /* 圖片高度與 Tabs 顏色 */
+    .stImage img { max-height: 200px; width: auto; object-fit: contain; }
+    .stTabs [data-baseweb="tab"] { color: #000000 !important; font-weight: bold !important; }
+    .stTabs [aria-selected="true"] { color: #FF9900 !important; border-bottom-color: #FF9900 !important; }
     </style>
     """, unsafe_allow_html=True)
 
-# 3. 讀取與處理數據 (適配你的 Excel 欄位)
+# 3. 讀取與處理數據
 try:
     df = pd.read_excel("my_products.xlsx")
     df.columns = df.columns.str.strip()
-    # 根據截圖顯示你的欄位名稱是 Source
     target_col = "Source" if "Source" in df.columns else "Sources"
-    
     for col in [target_col, 'Category', 'Product_Name', 'Image_URL']:
-        if col in df.columns:
-            df[col] = df[col].astype(str).str.strip()
+        if col in df.columns: df[col] = df[col].astype(str).str.strip()
 except Exception as e:
     st.error(f"Excel 讀取失敗: {e}")
     st.stop()
@@ -123,21 +96,15 @@ except Exception as e:
 # 4. 側邊欄導航
 with st.sidebar:
     st.title("📍 Navigation")
-    main_page = st.radio(
-        "Select Collection",
-        ["Toronto Base", "Amazon Top Choice", "CC Picks"],
-        index=0
-    )
+    main_page = st.radio("Select Collection", ["Toronto Base", "Amazon Top Choice", "CC Picks"], index=0)
     search_query = st.text_input("🔍 Search ALL Products", placeholder="Search anything...")
 
 # 5. 商品渲染函數
 def render_item_list(data):
     for _, row in data.iterrows():
-        # 產品卡片容器
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
         col1, col2 = st.columns([1, 4]) 
         with col1:
-            # 使用 image/ 資料夾路徑
             img_path = f"image/{row['Image_URL']}"
             st.image(img_path, use_container_width=True)
         with col2:
@@ -153,34 +120,22 @@ if search_query:
     st.title(f"🔍 Results: '{search_query}'")
     results = df[df['Product_Name'].str.contains(search_query, case=False, na=False) | 
               df['Description'].str.contains(search_query, case=False, na=False)]
-    if results.empty:
-        st.info("No matching products found.")
-    else:
-        render_item_list(results)
+    if results.empty: st.info("No matching products found.")
+    else: render_item_list(results)
 else:
     st.title(f"Explore: {main_page}")
-    
-    source_map = {
-        "Toronto Base": "Toronto Base", 
-        "Amazon Top Choice": "Amazon Top Choice", 
-        "CC Picks": "CC Picks"
-    }
+    source_map = {"Toronto Base": "Toronto Base", "Amazon Top Choice": "Amazon Top Choice", "CC Picks": "CC Picks"}
     current_tag = source_map.get(main_page)
     page_df = df[df[target_col] == current_tag]
-    
     if page_df.empty:
-        # 處理簡寫 (如 Toronto)
         short_tag = main_page.split()[0]
         page_df = df[df[target_col] == short_tag]
-
     if not page_df.empty:
         unique_cats = page_df['Category'].unique().tolist()
         tabs = st.tabs(unique_cats)
         for i, cat in enumerate(unique_cats):
-            with tabs[i]:
-                render_item_list(page_df[page_df['Category'] == cat])
-    else:
-        st.warning(f"No items found for {main_page}. Check your Excel 'Source' column.")
+            with tabs[i]: render_item_list(page_df[page_df['Category'] == cat])
+    else: st.warning(f"No items found for {main_page}.")
 
 st.divider()
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
