@@ -162,7 +162,7 @@ if st.session_state.search_val:
         render_item_list(results)
 else:
     st.title(f"Explore: {main_page}")
-    source_map = {"Toronto Base": "Toronto Base", "Amazon Top Choice": "Amazon Top Choice", "CC Picks": "CC Picks"}
+    source_map = {"Toronto Base": "Toronto Base", "Amazon Choice": "Amazon Choice", "CC Picks": "CC Picks"}
     current_tag = source_map.get(main_page)
     page_df = df[df[target_col] == current_tag]
     
@@ -180,5 +180,6 @@ else:
 
 st.divider()
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
 
 
