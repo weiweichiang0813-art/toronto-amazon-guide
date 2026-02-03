@@ -114,7 +114,7 @@ with st.sidebar:
     st.title("📍 Navigation")
     main_page = st.radio(
         "Select Collection",
-        ["Toronto Base", "Amazon Top Choice", "CC Picks"],
+        ["Toronto Base", "Amazon Choice", "CC Picks"],
         index=0,
         on_change=clear_search
     )
@@ -180,4 +180,5 @@ else:
 
 st.divider()
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
 
