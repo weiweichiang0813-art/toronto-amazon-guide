@@ -125,17 +125,28 @@ with st.sidebar:
     )
 
 # 5. 商品渲染函數
+# 5. 商品渲染函數
 def render_item_list(data):
     for _, row in data.iterrows():
         st.markdown('<div class="product-box">', unsafe_allow_html=True)
         col1, col2 = st.columns([1, 4]) 
         with col1:
-            st.image(f"image/{row['Image_URL']}", use_container_width=True)
+            # 建立圖片完整路徑
+            img_path = f"image/{row['Image_URL']}"
+            
+            # --- 增加這段檢查邏輯 ---
+            if os.path.exists(img_path):
+                st.image(img_path, use_container_width=True)
+            else:
+                # 如果找不到圖片，顯示一個提示文字，而不是讓程式崩潰
+                st.warning(f"⚠️ 圖片檔名不符: {row['Image_URL']}")
+            # ----------------------
+            
         with col2:
             st.subheader(row['Product_Name'])
             if st.session_state.search_val:
                 st.caption(f"Source: {row[target_col]} | Category: {row['Category']}")
-            # 商品說明現在會是黑色的，且粗細適中
+            
             st.write(row['Description'])
             st.link_button("View on Amazon", row['Affiliate_Link'])
         st.markdown('</div>', unsafe_allow_html=True)
@@ -169,3 +180,4 @@ else:
 
 st.divider()
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
