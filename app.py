@@ -49,7 +49,7 @@ st.markdown("""
 
     .product-box p, .product-box div, .main p, [data-testid="stMarkdownContainer"] p {
         color: #000000 !important;
-        font-weight: 400 !important; /* 恢復為 Normal */
+        font-weight: 400 !important;
         line-height: 1.6;
     }
 
@@ -93,7 +93,7 @@ try:
         if col in df.columns:
             df[col] = df[col].astype(str).str.strip()
 except Exception as e:
-    st.error(f"Excel 讀取失敗: {e}"); st.stop()
+    st.error(f"Excel read fail: {e}"); st.stop()
 
 with st.sidebar:
     st.title("📍 Navigation")
@@ -104,7 +104,7 @@ with st.sidebar:
         on_change=clear_search
     )
     search_query = st.text_input(
-        "🔍 Search ALL Products", 
+        "🔍 Search", 
         placeholder="Search anything...",
         key="search_val"
     )
@@ -119,7 +119,7 @@ def render_item_list(data):
             if os.path.exists(img_path):
                 st.image(img_path, use_container_width=True)
             else:
-                st.warning(f"⚠️ 圖片檔名不符: {row['Image_URL']}")
+                st.warning(f"⚠️ img does not match: {row['Image_URL']}")
             # ----------------------
             
         with col2:
@@ -159,6 +159,7 @@ else:
 
 st.divider()
 st.caption("© 2026 CC Picks the World | As an Amazon Associate, I earn from qualifying purchases.")
+
 
 
 
